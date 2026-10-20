@@ -1,10 +1,11 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from starlette import status
 from schemas.auth import RegisterReq, LoginReq
 from models.user import Users
-from db.session import db_dependancy
-from utils.helpers import hash_password, verify_password, create_jwt_token, decode_jwt_token
+from utils.helpers import hash_password, verify_password, create_jwt_token
 from datetime import timedelta
+from typing import Annotated
+from utils.dependencies import user_dependancy, db_dependancy
 
 router = APIRouter(
     prefix='/auth',
@@ -63,3 +64,13 @@ async def login_user(req: LoginReq, db:db_dependancy):
         'expires_in': timedelta(minutes=30)
     }
 
+@router.get('/me')
+async def get_me(current_user: user_dependancy):
+    return {
+        'id': current_user.id,
+        'full_name': current_user.full_name,
+        'email': current_user.email,
+        'role': current_user.role,
+        'is_active': current_user.is_active,
+        'created_at': current_user.created_at
+    }

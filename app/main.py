@@ -2,10 +2,10 @@ from fastapi import FastAPI, HTTPException, APIRouter
 import time
 from models import user, product, order, order_item
 from db.session import engine
-from db.session import db_dependancy
 from sqlalchemy import text
 from routers import auth
 from db.base import Base
+from utils.dependencies import db_dependancy
 
 app = FastAPI()
 Base.metadata.create_all(bind=engine)
